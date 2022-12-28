@@ -40,13 +40,15 @@ const example2 = [
   },
 ];
 
-function addPrice(arr1, arr2) {
+function addPrice(collector, newApparment) {
   let newAp = [];
   //   console.log(arr1.length);
-  for (let i = 0; i < arr1.length; i++) {
+  for (let i = 0; i < collector.length; i++) {
     // console.log(i);
-    const obj1 = arr1[i];
-    const obj2 = arr2.find((item) => item.apartmentID === obj1.apartmentID);
+    const obj1 = collector[i];
+    const obj2 = newApparment.find(
+      (item) => item.apartmentID === obj1.apartmentID
+    );
     if (obj2) {
       obj1.prices = {
         ...obj1.prices,
@@ -56,7 +58,7 @@ function addPrice(arr1, arr2) {
   }
   //   const ob3 = obj1.find((item) => item.apartmentID != newApparment.apartmentID);
   //   console.log(obj3);
-  return arr1;
+  return collector;
 }
 
 const dav = addPrice(example2, example);

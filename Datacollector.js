@@ -1,11 +1,66 @@
 import fetch from "node-fetch";
-import apartmentsNew from "./apartments_32.11.2022.json" assert { type: "json" };
-import apartments from "./apartments_28.11.2022.json" assert { type: "json" };
+import apartmentsNew from "./Collector_9.3.2023.json" assert { type: "json" };
+import collector from "./Collector_2.2.2023.json" assert { type: "json" };
 import fs from "fs";
-const example = [
+
+const today = new Date();
+const day = today.getDate();
+const month = today.getMonth();
+const year = today.getFullYear();
+const timeStamp = day + "." + month + "." + year;
+
+const newCollector = addPrice(collector, apartmentsNew);
+
+function addPrice(collector, newData) {
+  let newAp = [];
+
+  for (let i = 0; i < collector.length; i++) {
+    const obj1 = collector[i];
+    const obj2 = newData.find((item) => item.apartmentID === obj1.apartmentID);
+
+    if (obj2) {
+      obj2.prices = {
+        ...obj1.prices,
+        ...obj2.prices,
+      };
+    }
+  }
+  const newApartments = newData.filter(
+    (item) => !collector.some((other) => other.apartmentID === item.apartmentID)
+  );
+
+  //   console.log("newApartment", newApartments);
+
+  return newData;
+}
+
+// console.log(newCollector);
+
+fs.writeFile(
+  `Collector_${timeStamp}.json`,
+  JSON.stringify(newCollector),
+  function (error) {
+    if (error) return console.log(error);
+    console.log("file saved");
+  }
+);
+
+// const response = await fetch(
+//   `https://apartmentsanalytics-default-rtdb.europe-west1.firebasedatabase.app/`,
+//   {
+//     method: "POST",
+//     headers: { "Content-Type": "application/json" },
+//     body: JSON.stringify({ [timeStamp]: newCollector }),
+//   }
+// ).catch((err) => {
+//   console.log("Error", err);
+// });
+// console.log("Success", response);
+
+const Collector = [
   {
     region: "Աջափնյակ, 3 սեն., 77 ք.մ., 3/5 հարկ",
-    apartmentID: "17843559",
+    apartmentID: "17900508",
     districtNum: 2,
     timeStamp: "23.8.2022",
     prices: {
@@ -16,14 +71,14 @@ const example = [
   },
   {
     region: "Աջափնյակ, 4 սեն., 124 ք.մ., 9/14 հարկ",
-    apartmentID: "17900508",
+    apartmentID: "12900508",
     districtNum: 2,
     timeStamp: "23.8.2022",
     prices: { "23.8.2022": "44,000,000 ֏" },
   },
 ];
 
-const example2 = [
+const newData = [
   {
     region: "Աջափնյակ, 3 սեն., 77 ք.մ., 3/5 հարկ",
     apartmentID: "17900508",
@@ -39,32 +94,3 @@ const example2 = [
     prices: { "26.8.2022": "46,000,000 ֏" },
   },
 ];
-
-function addPrice(collector, newApparment) {
-  let newAp = [];
-  //   console.log(arr1.length);
-  for (let i = 0; i < collector.length; i++) {
-    // console.log(i);
-    const obj1 = collector[i];
-    const obj2 = newApparment.find(
-      (item) => item.apartmentID === obj1.apartmentID
-    );
-    if (obj2) {
-      obj1.prices = {
-        ...obj1.prices,
-        ...obj2.prices,
-      };
-    }
-  }
-  //   const ob3 = obj1.find((item) => item.apartmentID != newApparment.apartmentID);
-  //   console.log(obj3);
-  return collector;
-}
-
-const dav = addPrice(example2, example);
-
-console.log(dav);
-// fs.writeFile(`apartmentsCollected.json`, JSON.stringify(dav), function (error) {
-//   if (error) return console.log(error);
-//   console.log("file saved");
-// });

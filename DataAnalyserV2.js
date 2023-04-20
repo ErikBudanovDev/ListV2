@@ -1,7 +1,6 @@
-import collector from "./Collector_9.3.2023.json" assert { type: "json" };
-import lastMonthAppartmentsRaw from "./apartments_2.2.2023.json" assert { type: "json" };
-import currentMonthAppartmentRaw from "./apartments_9.3.2023.json" assert { type: "json" };
-import fetch from "node-fetch";
+import collector from "./Collectors/Collector_17.3.2023..json" assert { type: "json" };
+import lastMonthAppartmentsRaw from "./RAW_Data/apartments_9.3.2023.json" assert { type: "json" };
+import currentMonthAppartmentRaw from "./RAW_Data/apartments_17.3.2023.json" assert { type: "json" };
 import { Headers } from "node-fetch";
 
 const currency = 388;
@@ -15,7 +14,7 @@ function parseDate(dateString) {
 function filterByDistrict(array, districtNum) {
   return array.filter((item) => item.districtNum === districtNum);
 }
-const districtNum = 4;
+const districtNum = 9;
 const districts = {
   1: "Yerevan",
   2: "Arabkir",
@@ -141,7 +140,7 @@ const increasedPricesCount = countIncreasedPrices(differenceArray);
 console.log(`Analytics for ${districts[districtNum]}`);
 // console.log("median", median);
 // console.log("mode", modeValue);
-// console.log(`average price change`, average);
+console.log(`average price change`, average);
 console.log("lowered prices count", loweredPricesCount);
 console.log("increased prices count", increasedPricesCount);
 
@@ -173,13 +172,13 @@ const lastMonthAppartments = removeDuplicateObjects(lastMonthAppartmentsRaw);
 const currentMonthAppartment = removeDuplicateObjects(
   currentMonthAppartmentRaw
 );
-// console.log("lastMonthApartment Raw length", lastMonthAppartmentsRaw.length);
-// console.log(
-//   "currentMonthAppartment Raw length",
-//   currentMonthAppartmentRaw.length
-// );
-// console.log("lastMonthApartment length", lastMonthAppartments.length);
-// console.log("currentMonthAppartment length", currentMonthAppartment.length);
+console.log("lastMonthApartment Raw length", lastMonthAppartmentsRaw.length);
+console.log(
+  "currentMonthAppartment Raw length",
+  currentMonthAppartmentRaw.length
+);
+console.log("lastMonthApartment length", lastMonthAppartments.length);
+console.log("currentMonthAppartment length", currentMonthAppartment.length);
 
 function compareArrays(newArray, oldArray) {
   let newObjectsCount = 0;

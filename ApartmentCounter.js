@@ -1,5 +1,5 @@
-import lastMonthAppartmentsRaw from "./apartments_2.2.2023.json" assert { type: "json" };
-import currentMonthAppartmentRaw from "./apartments_9.3.2023.json" assert { type: "json" };
+import lastMonthAppartmentsRaw from "./RAW_Data/apartments_9.3.2023.json" assert { type: "json" };
+import currentMonthAppartmentRaw from "./test1_19.3.2023.json" assert { type: "json" };
 
 const lastMonthAppartments = removeDuplicateObjects(lastMonthAppartmentsRaw);
 const currentMonthAppartment = removeDuplicateObjects(

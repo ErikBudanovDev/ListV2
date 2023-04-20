@@ -2,7 +2,6 @@
 import * as cheerio from "cheerio";
 import fetch from "node-fetch";
 import fs from "fs";
-import Collector from "./Collector_20.1.2023.json" assert { type: "json" };
 // creating main link for Listam
 let mainUrl = "https://www.list.am/category/60";
 let subPart = "?n=";
@@ -19,7 +18,10 @@ async function getApartments() {
     const month = today.getMonth();
     const year = today.getFullYear();
     const timeStamp = day + "." + month + "." + year;
-    for (let pageNum = 1; pageNum < 21; pageNum++) {
+    let pageNum = 1;
+    let hasNextPage = true;
+    while (hasNextPage) {
+      hasNextPage = false;
       for (let districtNum = 2; districtNum < 13; districtNum++) {
         let urlCall = `${mainUrl}${pageNumFront}${pageNum}${subPart}${districtNum}${subPart2}`;
         // console.log(urlCall);
@@ -33,7 +35,19 @@ async function getApartments() {
           let apartmentID = "";
 
           const apartmentIdRaw = $(element).attr("href");
+          const nextPage = $(element).attr("href");
+          if (nextPage) {
+            const nextPageMatch = nextPage.match(/\/category\/60\/(\d+)/);
 
+            if (nextPageMatch && nextPageMatch[1]) {
+              const nextPageNum = parseInt(nextPageMatch[1]);
+
+              if (nextPageNum > pageNum) {
+                pageNum = nextPageNum;
+                hasNextPage = true;
+              }
+            }
+          }
           if (apartmentIdRaw) {
             if (apartmentIdRaw.startsWith("/item") & (apartmentIdRaw != "")) {
               apartmentID = apartmentIdRaw.slice(6);

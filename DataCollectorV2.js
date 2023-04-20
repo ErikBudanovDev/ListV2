@@ -1,6 +1,5 @@
-import fetch from "node-fetch";
-import apartmentsNew from "./apartments_9.3.2023.json" assert { type: "json" };
-import collector from "./Collector_2.2.2023.json" assert { type: "json" };
+import apartmentsNew from "./RAW_Data/apartments_17.3.2023.json" assert { type: "json" };
+import collector from "./Collectors/Collector_9.3.2023.json" assert { type: "json" };
 import fs from "fs";
 
 const today = new Date();
@@ -51,7 +50,7 @@ function mergeData(collector, newData) {
 }
 
 fs.writeFile(
-  `Collector_9.3.2023.json`,
+  `Collector_${timeStamp}..json`,
   JSON.stringify(newCollector),
   function (error) {
     if (error) return console.log(error);

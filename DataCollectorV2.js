@@ -1,12 +1,12 @@
-import apartmentsNew from "./RAW_Data/apartments_17.3.2023.json" assert { type: "json" };
-import collector from "./Collectors/Collector_9.3.2023.json" assert { type: "json" };
+import apartmentsNew from "./RAW_Data/apartments_23.3.2023.json" assert { type: "json" };
+import collector from "./Collectors/Collector_22.3.2023.json" assert { type: "json" };
 import fs from "fs";
 
 const today = new Date();
 const day = today.getDate();
 const month = today.getMonth();
 const year = today.getFullYear();
-const timeStamp = day + "." + month + "." + year;
+const timeStamp = day + "-" + month + "-" + year;
 
 const newCollector = mergeData(collector, apartmentsNew);
 
@@ -50,7 +50,7 @@ function mergeData(collector, newData) {
 }
 
 fs.writeFile(
-  `Collector_${timeStamp}..json`,
+  `Collector_${timeStamp}.json`,
   JSON.stringify(newCollector),
   function (error) {
     if (error) return console.log(error);

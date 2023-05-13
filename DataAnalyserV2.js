@@ -1,6 +1,6 @@
-import collector from "./Collectors/Collector_17.3.2023..json" assert { type: "json" };
-import lastMonthAppartmentsRaw from "./RAW_Data/apartments_9.3.2023.json" assert { type: "json" };
-import currentMonthAppartmentRaw from "./RAW_Data/apartments_17.3.2023.json" assert { type: "json" };
+import collector from "./Collectors/Collector_22.3.2023.json" assert { type: "json" };
+import lastMonthAppartmentsRaw from "./RAW_Data/apartments_2.2.2023.json" assert { type: "json" };
+import currentMonthAppartmentRaw from "./RAW_Data/apartments_29-3-2023.json" assert { type: "json" };
 import { Headers } from "node-fetch";
 
 const currency = 388;
@@ -14,7 +14,7 @@ function parseDate(dateString) {
 function filterByDistrict(array, districtNum) {
   return array.filter((item) => item.districtNum === districtNum);
 }
-const districtNum = 9;
+const districtNum = 4;
 const districts = {
   1: "Yerevan",
   2: "Arabkir",
@@ -30,8 +30,8 @@ const districts = {
   12: "Nubarashen",
 };
 
-const filteredCollector = filterByDistrict(collector, districtNum);
-// const filteredCollector = collector;
+// const filteredCollector = filterByDistrict(collector, districtNum);
+const filteredCollector = collector;
 
 filteredCollector.sort((a, b) => {
   const aLatestDate = Math.max(

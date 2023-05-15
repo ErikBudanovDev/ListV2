@@ -6,6 +6,7 @@ import PriceDifferenceCalculator from "./priceDifferenceCalculator.js";
 import PriceChangeCounter from "./priceChangeCounter.js";
 import HistogramGenerator from "../util/histogramGenerator.js";
 import moment from "moment";
+import MonthlyFilter from "../databaseManager/monthlyFilter.js";
 // ...
 
 // After calculating priceChanges
@@ -22,6 +23,15 @@ export default class PriceAnalytics extends PriceStatistics {
     const apartmentFilter = new ApartmentFilter(client);
     const filteredApartments = await apartmentFilter.filterApartments(
       this.filters
+    );
+    return filteredApartments;
+  }
+
+  async getMonthlyFilteredApartments(dateToAnalyze) {
+    const apartmentFilter = new MonthlyFilter(client);
+    const filteredApartments = await apartmentFilter.filterApartments(
+      this.filters,
+      dateToAnalyze
     );
     return filteredApartments;
   }
@@ -71,7 +81,7 @@ export default class PriceAnalytics extends PriceStatistics {
         modePricePerSqm,
       };
     } else {
-      console.log("No apartments with valid prices found.");
+      // console.log("No apartments with valid prices found.");
       return {
         averagePricePerSqm: NaN,
         medianPricePerSqm,
@@ -121,19 +131,11 @@ export default class PriceAnalytics extends PriceStatistics {
       );
 
       const averagePriceChange = this.calculateAverage(filteredPriceChanges);
-      const histogramGenerator = new HistogramGenerator(priceChanges, 40);
-      histogramGenerator.exportToCSV("price_changes_histogram.csv");
+      // const histogramGenerator = new HistogramGenerator(priceChanges, 40);
+      // histogramGenerator.exportToCSV("price_changes_histogram.csv");
       console.log("Analytics results:");
       console.log("Lowered prices count:", loweredPricesCount);
       console.log("Increased prices count:", increasedPricesCount);
-      // console.log("Average price per sqm:", averagePricePerSqm);
-      // console.log(
-      //   "Median price per sqm:",
-      //   averagePricePerSqm.medianPricePerSqm
-      // );
-      // console.log("Mode price per sqm:", averagePricePerSqm.modePricePerSqm);
-      // console.log("Median price change:", medianPriceChange);
-      // console.log("Mode price change:", modePriceChange);
       console.log("Average price changes:", averagePriceChange);
       const numericPriceChanges = priceChanges.filter(
         (priceChange) => !isNaN(priceChange)
@@ -157,8 +159,8 @@ export default class PriceAnalytics extends PriceStatistics {
       throw error;
     } finally {
       // console.log("Closing MongoDB connection");
-      await client.close();
-      console.log("Closed MongoDB connection");
+      // await client.close();
+      // console.log("Closed MongoDB connection");
     }
   }
 
@@ -171,33 +173,38 @@ export default class PriceAnalytics extends PriceStatistics {
         .clone()
         .subtract(i, "days")
         .format("DD-MM-YYYY");
-      this.filters.timeStamp = dateToAnalyze;
-      console.log("Analyzing date:", dateToAnalyze);
-      const analysisResult = await this.performAnalysis();
+      // console.log("Analyzing date:", dateToAnalyze);
+      const filteredApartments = await this.getMonthlyFilteredApartments(
+        dateToAnalyze
+      );
+      const dataPreProcessor = new DataPreProcessor(filteredApartments);
+      await dataPreProcessor.prepareData();
+      const preparedApartments = await dataPreProcessor.getData();
+      const analysisResult = this.averagePriceCalculator(preparedApartments);
       monthlyAveragePrices.push({
         date: dateToAnalyze,
-        averagePricePerSqm:
-          analysisResult.averagePricePerSqm.averagePricePerSqm,
+        averagePricePerSqm: analysisResult.averagePricePerSqm,
       });
+      // console.log("Analysis result:", analysisResult);
     }
     return monthlyAveragePrices;
   }
 }
 
-(async () => {
-  const filters = {
-    constructionType: "Stone",
-    timeStamp: "13-4-2023",
-    floor: "14",
-    districtNum: 2,
-    // newConstruction: "No",
-    // floorsInBuilding: "16",
-    // floor: "14",
-    // balcony: "Open balcony",
-    // renovation: "Old Renovation",
-  };
+// (async () => {
+//   const filters = {
+//     constructionType: "Stone",
+//     timeStamp: "13-4-2023",
+//     floor: "2",
+//     districtNum: 2,
+//     // newConstruction: "No",
+//     // floorsInBuilding: "16",
+//     // floor: "14",
+//     // balcony: "Open balcony",
+//     // renovation: "Old Renovation",
+//   };
 
-  const analytics = new PriceAnalytics(filters);
-  // await analytics.performAnalysis();
-  // await analytics.calculateMonthlyAveragePrices();
-})();
+//   const analytics = new PriceAnalytics(filters);
+//   // await analytics.performAnalysis();
+//   await analytics.calculateMonthlyAveragePrices();
+// })();

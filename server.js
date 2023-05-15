@@ -1,5 +1,7 @@
 import express from "express";
 import PriceAnalytics from "./analytics/Categorizer.js";
+import { client } from "./util/mongoDBConnector.js";
+
 const app = express();
 const port = 8080;
 
@@ -20,20 +22,29 @@ app.get("/", (req, res) => {
 });
 
 app.post("/analytics", async (req, res) => {
-  let { constructionType, timeStamp, districtNum, floor } = req.body;
-  console.log("Received request:", req.body);
+  let { constructionType, districtNum, floor } = req.body;
   districtNum = parseInt(districtNum);
   const analytics = new PriceAnalytics({
     constructionType,
-    timeStamp,
+    timeStamp: "14-4-2023",
     districtNum,
     floor,
+    // renovation,
   });
-  const resp = await analytics.performAnalysis();
-  const monthlyAveragePrices = await analytics.calculateMonthlyAveragePrices();
-
-  // res.send(resp, );
-  res.status(200).send(monthlyAveragePrices);
+  try {
+    const resp = await analytics.performAnalysis();
+    const monthlyAveragePrices =
+      await analytics.calculateMonthlyAveragePrices();
+    res.status(200).send({ resp, monthlyAveragePrices });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .send({ error: "An error occurred while processing your request." });
+  } finally {
+    // Close the client after both methods have been called
+    await client.close();
+  }
 });
 
 app.listen(port, () => {

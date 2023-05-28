@@ -26,7 +26,7 @@ app.post("/analytics", async (req, res) => {
   districtNum = parseInt(districtNum);
   const analytics = new PriceAnalytics({
     constructionType,
-    timeStamp: "14-4-2023",
+    timeStamp: "15-4-2023",
     districtNum,
     floor,
     // renovation,

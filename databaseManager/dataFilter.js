@@ -13,7 +13,7 @@ export default class ApartmentFilter {
         "details.Construction Type": filters.constructionType,
         timeStamp: filters.timeStamp,
         districtNum: filters.districtNum,
-        "details.Floor": filters.floor,
+        // "details.Floor": filters.floor,
       };
       const results = await collection.find(query).toArray();
       console.log("Filtered apartments:", results.length);

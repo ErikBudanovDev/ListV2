@@ -168,7 +168,7 @@ export default class PriceAnalytics extends PriceStatistics {
     const dateNow = moment(this.filters.timeStamp, "DD-MM-YYYY");
     const monthlyAveragePrices = [];
 
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 90; i++) {
       const dateToAnalyze = dateNow
         .clone()
         .subtract(i, "days")

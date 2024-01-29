@@ -18,17 +18,19 @@ app.use((req, res, next) => {
   next();
 });
 app.get("/", (req, res) => {
-  res.send("Hello World!");
+  const dateNow = new Date;
+  const dateFormatted = `${dateNow.getDay()}-${dateNow.getMonth()}-${dateNow.getFullYear()}`;
+  res.send(dateFormatted);
 });
 
 app.post("/analytics", async (req, res) => {
-  let { constructionType, districtNum, floor } = req.body;
+  let { constructionType, districtNum } = req.body;
   districtNum = parseInt(districtNum);
   const analytics = new PriceAnalytics({
     constructionType,
-    timeStamp: "15-4-2023",
+    timeStamp: "23-11-2023",
     districtNum,
-    floor,
+    // floor,
     // renovation,
   });
   try {
